@@ -10,11 +10,13 @@ white = (255, 255, 255)
 
 class Snake:
     cell = []
-    step = 20
-    direction = 1
+    __step = 20
+    __direction = 1
+    cracked = 0
     def __init__(self):
         for i in range(5):
-            self.cell.append(pygame.draw.rect(screen, white, [150 - i * 20, 10, 20, 20]))
+            self.cell.append(pygame.draw.rect(screen, white, [150 - i * 20, 10, self.__step, self.__step]))
+
     def moveLeft(self):
         # 先逐个移动
         count = len(self.cell) - 1
@@ -23,25 +25,48 @@ class Snake:
             self.cell[count].y = self.cell[count - 1].y
             count -= 1
         # 改头的位置
-        self.cell[0].x -= self.step
+        self.cell[0].x -= self.__step
+
     def move(self):
-        # 先固定向右边移动
         count = len(self.cell) - 1
-        head = self.cell[0]
         while (count > 0):
             self.cell[count].x = self.cell[count - 1].x
             self.cell[count].y = self.cell[count - 1].y
             count -= 1
         # 改头的位置
-        if (self.direction == 0):
-            self.cell[0].y -= self.step
-        elif (self.direction == 1): 
-            self.cell[0].x += self.step
-        elif (self.direction == 2): 
-            self.cell[0].y += self.step
+        if (self.__direction == 0):
+            self.cell[0].y -= self.__step
+        elif (self.__direction == 1): 
+            self.cell[0].x += self.__step
+        elif (self.__direction == 2): 
+            self.cell[0].y += self.__step
         else:
-            self.cell[0].x -= self.step
-        
+            self.cell[0].x -= self.__step
+        # 判断是否撞到了自己
+        count = len(self.cell) - 1
+        head = self.cell[0]
+        while (count > 0):
+            if (self.cell[count].x == head.x and self.cell[count].y == head.y):
+                self.cracked = 1
+                break
+            count -= 1
+
+    def setUpDirection(self):
+        if (self.__direction == 2): return
+        self.__direction = 0
+
+    def setRightDirection(self):
+        if (self.__direction == 3): return
+        self.__direction = 1   
+
+    def setDownDirection(self):
+        if (self.__direction == 0): return
+        self.__direction = 2
+
+    def setLeftDirection(self):
+        if (self.__direction == 1): return
+        self.__direction = 3  
+
     # def grow(self):
         # 吃到食物后，在头部插入一个单元
         # cell.append()
@@ -51,16 +76,19 @@ while 1:
         if event.type == pygame.QUIT: sys.exit()
         if event.type == pygame.KEYDOWN:
             if (event.key == pygame.K_UP): 
-                snake.direction = 0
+                snake.setUpDirection()
             elif (event.key == pygame.K_RIGHT): 
-                snake.direction = 1
+                snake.setRightDirection()
             elif (event.key == pygame.K_DOWN): 
-                snake.direction = 2
+                snake.setDownDirection()
             elif (event.key == pygame.K_LEFT):
-                snake.direction = 3                 
+                snake.setLeftDirection()               
     screen.fill((0,0,0))
     snake.move()
     for rect in snake.cell:
         pygame.draw.rect(screen, white, rect)
     pygame.display.update()
+    if (snake.cracked): 
+        print('cracked!')
+        exit()
     time.sleep(0.5)
