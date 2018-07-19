@@ -127,6 +127,7 @@ startTime = time.time()
 while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+        # 判断是否按下了方向键
         if event.type == pygame.KEYDOWN:
             if (event.key == pygame.K_UP): 
                 snake.setUpDirection()
@@ -135,20 +136,24 @@ while 1:
             elif (event.key == pygame.K_DOWN): 
                 snake.setDownDirection()
             elif (event.key == pygame.K_LEFT):
-                snake.setLeftDirection()               
+                snake.setLeftDirection()      
+    # 清空界面
     gameSurface.fill((0,0,0))
     infoSurface.fill((0,0,0))
+    # 蛇的移动
     snake.move()
     if (snake.bEatTheFood()):
         snake.grow()
         snake.setTarget()
     for rect in snake.cell:
         pygame.draw.rect(gameSurface, snakeColor, rect)
+    # 重绘蛇和游戏信息
     pygame.draw.rect(gameSurface, foodColor, snake.targetRect)
     gameTime = math.ceil(time.time() - startTime)
     infoSurface.blit(myFont.render('snake length:' + str(len(snake.cell)), True, (255,255,255)), (0,0))
     infoSurface.blit(myFont.render('game time:' + str(gameTime) + 's', True, (255,255,255)), (0,16))
     pygame.display.update()
+    # 判断蛇是否撞到了自己
     if (snake.cracked): 
         print('cracked!')
         exit()
