@@ -196,7 +196,7 @@ def gameInit():
     # 食物的颜色
     foodColor = (255, 0, 0)
 
-# 全局变量
+# 全局变量11
 gameSurface = None
 infoSurface = None
 containerSurface = None
