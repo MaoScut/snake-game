@@ -1,4 +1,4 @@
-import sys, pygame, time
+import sys, pygame, time, random
 pygame.init()
 
 size = width, height = 800, 600
@@ -13,10 +13,11 @@ class Snake:
     __step = 20
     __direction = 1
     cracked = 0
+    targetRect = {}
     def __init__(self):
         for i in range(5):
-            self.cell.append(pygame.draw.rect(screen, white, [150 - i * 20, 10, self.__step, self.__step]))
-
+            self.cell.append(pygame.draw.rect(screen, white, [140 - i * 20, 0, self.__step, self.__step]))
+        self.targetRect = pygame.Rect(random.randrange(0, 40) * 20, random.randrange(0, 30) * 20, self.__step, self.__step)
     def moveLeft(self):
         # 先逐个移动
         count = len(self.cell) - 1
@@ -66,10 +67,33 @@ class Snake:
     def setLeftDirection(self):
         if (self.__direction == 1): return
         self.__direction = 3  
-
-    # def grow(self):
+    def setTarget(self):
+        self.targetRect = pygame.Rect(random.randrange(0, 40) * 20, random.randrange(0, 30) * 20, self.__step, self.__step)
+    def bEatTheFood(self):
+        nextX = 0
+        nextY = 0       
+        head = self.cell[0]
+        if (self.__direction == 0):
+            nextX = head.x
+            nextY = head.y - self.__step
+        elif (self.__direction == 1):
+            nextX = head.x + self.__step
+            nextY = head.y
+        elif (self.__direction == 2):
+            nextX = head.x
+            nextY = head.y + self.__step
+        else:
+            nextX = head.x - self.__step
+            nextY = head.y
+        if (self.targetRect.x == nextX and self.targetRect.y == nextY):
+            print('true')
+            return True
+        else:
+            print('false')
+            return False
+    def grow(self):
         # 吃到食物后，在头部插入一个单元
-        # cell.append()
+        self.cell.insert(0, self.targetRect)
 snake = Snake()
 while 1:
     for event in pygame.event.get():
@@ -85,8 +109,12 @@ while 1:
                 snake.setLeftDirection()               
     screen.fill((0,0,0))
     snake.move()
+    if (snake.bEatTheFood()):
+        snake.grow()
+        snake.setTarget()
     for rect in snake.cell:
         pygame.draw.rect(screen, white, rect)
+    pygame.draw.rect(screen, white, snake.targetRect)
     pygame.display.update()
     if (snake.cracked): 
         print('cracked!')
