@@ -238,13 +238,13 @@ while 1:
                 controller.setLeftDirection()
     # 清空界面
     controller.clear()
-    # 蛇的移动
-    controller.snakeMove()
     if (controller.IsGameOver()):
         exit()
     if (controller.bEatTheFood()):
         controller.snakeGrow()
         controller.resetFood()
+    # 蛇的移动
+    controller.snakeMove()
     # 重绘蛇和游戏信息
     controller.redraw()
     time.sleep(0.2)
