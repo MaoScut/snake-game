@@ -162,8 +162,20 @@ class Controller:
         self.snake.grow(self.food)
 
     def resetFood(self):
-        self.food = pygame.Rect(random.randrange(
-            0, 30)*20, random.randrange(0, 30)*20, self.__step, self.__step)
+        # 不能出现在蛇的位置
+        # 最多就900个，暂时用最原始的方法
+        flag = True
+        while flag:
+            rand = [random.randrange(0, gameSurface.get_width()/self.__step)*self.__step, random.randrange(0, gameSurface.get_width()/self.__step)*self.__step]
+            repeated = False
+            for rect in self.snake.cell:
+                if (rect.x == rand[0] and rect.y == rand[1]):
+                    repeated = True
+                    break
+            if (repeated):
+                continue
+            flag = False
+        self.food = pygame.Rect(rand[0], rand[1], self.__step, self.__step)
 
 def gameInit():
     global containerSurface
@@ -196,7 +208,7 @@ def gameInit():
     # 食物的颜色
     foodColor = (255, 0, 0)
 
-# 全局变量11123444
+# 全局变量
 gameSurface = None
 infoSurface = None
 containerSurface = None
@@ -235,4 +247,4 @@ while 1:
         controller.resetFood()
     # 重绘蛇和游戏信息
     controller.redraw()
-    time.sleep(0.5)
+    time.sleep(0.2)
